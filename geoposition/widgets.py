@@ -42,8 +42,10 @@ class GeopositionWidget(forms.MultiWidget):
 
     class Media:
         js = (
-            '//maps.google.com/maps/api/js?key=%s' % settings.GOOGLE_MAPS_API_KEY,
+            # '//maps.google.com/maps/api/js?key=%s' % settings.GOOGLE_MAPS_API_KEY,
             'geoposition/geoposition.js',
+            'https://www.barcelona.cat/api-management/javascripts/geobcn.min.js',
+            'https://www.barcelona.cat/api-service/bcn-planol/js/bcn_service_planol.min.js'
         )
         css = {
             'all': ('geoposition/geoposition.css',)

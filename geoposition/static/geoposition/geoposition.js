@@ -10,157 +10,66 @@ if (jQuery != undefined) {
     $(document).ready(function() {
 
         try {
-            var _ = google;
+            var _ = geobcn;
         } catch (ReferenceError) {
-            console.log('geoposition: "google" not defined.  You might not be connected to the internet.');
+            console.log('geoposition: "geobcn" not defined.  You might not be connected to the internet.');
             return;
         }
 
         var mapDefaults = {
-            'mapTypeId': google.maps.MapTypeId.ROADMAP,
-            'scrollwheel': false,
-            'streetViewControl': false,
-            'panControl': false
+            "controls": true,
+            "proj": 'EPSG:4326',
+            "zoom": 3,
+            "scrollwheel": true,
         };
 
-        var markerDefaults = {
-            'draggable': true,
-            'animation': google.maps.Animation.DROP
-        };
 
         $('.geoposition-widget').each(function() {
             var $container = $(this),
-                $mapContainer = $('<div class="geoposition-map" />'),
+                idMap = 'contact-map',
+                $mapContainer = $('<div class="geoposition-map" id="' + idMap + '" >'),
                 $addressRow = $('<div class="geoposition-address" />'),
                 $searchRow = $('<div class="geoposition-search" />'),
-                $searchInput = $('<input>', {'type': 'search', 'placeholder': 'Start typing an address …'}),
                 $latitudeField = $container.find('input.geoposition:eq(0)'),
                 $longitudeField = $container.find('input.geoposition:eq(1)'),
                 latitude = parseFloat($latitudeField.val()) || null,
                 longitude = parseFloat($longitudeField.val()) || null,
                 map,
                 mapLatLng,
-                mapOptions,
-                mapCustomOptions,
-                markerOptions,
-                markerCustomOptions,
-                marker;
+                mapOptions;
 
             $mapContainer.css('height', $container.attr('data-map-widget-height') + 'px');
-            mapCustomOptions = JSON.parse($container.attr('data-map-options'));
-            markerCustomOptions = JSON.parse($container.attr('data-marker-options'));
 
-            function doSearch() {
-                var gc = new google.maps.Geocoder();
-                $searchInput.parent().find('ul.geoposition-results').remove();
-                gc.geocode({
-                    'address': $searchInput.val()
-                }, function(results, status) {
-                    if (status == 'OK') {
-                        var updatePosition = function(result) {
-                            if (result.geometry.bounds) {
-                                map.fitBounds(result.geometry.bounds);
-                            } else {
-                                map.panTo(result.geometry.location);
-                                map.setZoom(18);
-                            }
-                            marker.setPosition(result.geometry.location);
-                            google.maps.event.trigger(marker, 'dragend');
-                        };
-                        if (results.length == 1) {
-                            updatePosition(results[0]);
-                        } else {
-                            var $ul = $('<ul />', {'class': 'geoposition-results'});
-                            $.each(results, function(i, result) {
-                                var $li = $('<li />');
-                                $li.text(result.formatted_address);
-                                $li.bind('click', function() {
-                                    updatePosition(result);
-                                    $li.closest('ul').remove();
-                                });
-                                $li.appendTo($ul);
-                            });
-                            $searchInput.after($ul);
-                        }
-                    }
-                });
-            }
-
-            function doGeocode() {
-                var gc = new google.maps.Geocoder();
-                gc.geocode({
-                    'latLng': marker.position
-                }, function(results, status) {
-                    $addressRow.text('');
-                    if (results && results[0]) {
-                        $addressRow.text(results[0].formatted_address);
-                    }
-                });
-            }
-
-            var autoSuggestTimer = null;
-            $searchInput.bind('keydown', function(e) {
-                if (autoSuggestTimer) {
-                    clearTimeout(autoSuggestTimer);
-                    autoSuggestTimer = null;
-                }
-
-                // if enter, search immediately
-                if (e.keyCode == 13) {
-                    e.preventDefault();
-                    doSearch();
-                }
-                else {
-                    // otherwise, search after a while after typing ends
-                    autoSuggestTimer = setTimeout(function(){
-                        doSearch();
-                    }, 1000);
-                }
-            }).bind('abort', function() {
-                $(this).parent().find('ul.geoposition-results').remove();
-            });
-            $searchInput.appendTo($searchRow);
             $container.append($searchRow, $mapContainer, $addressRow);
 
-            mapLatLng = new google.maps.LatLng(latitude, longitude);
+            mapLatLng = bcnPlanol.maps.LatLng(latitude, longitude);
 
-            mapOptions = $.extend({}, mapDefaults, mapCustomOptions);
-
-            if (!(latitude === null && longitude === null && mapOptions['center'])) {
-                mapOptions['center'] = mapLatLng;
+            function setGuideDetailPlanolBCNPoints() {
+                var feature = {
+                  'id': idMap,
+                  'latLng': mapLatLng,
+                  // 'html': html.replace(/["']/g, "\'").toString("utf8"),
+                  'proj': 'EPSG:4326'
+                };
+                bcnPlanol.maps.addPoint(feature);
             }
 
-            if (!mapOptions['zoom']) {
-                mapOptions['zoom'] = latitude && longitude ? 15 : 1;
+            mapOptions = $.extend({}, mapDefaults, {"center": mapLatLng, "callback": setGuideDetailPlanolBCNPoints});
+
+            function init_bcn_map() {
+                if ($('#contact-map').length > 0 && typeof bcnPlanol.maps !== 'undefined') {
+                    map = new bcnPlanol.maps.Map(idMap, mapOptions);
+                }
             }
 
-            map = new google.maps.Map($mapContainer.get(0), mapOptions);
-            markerOptions = $.extend({}, markerDefaults, markerCustomOptions, {
-                'map': map
-            });
-
-            if (!(latitude === null && longitude === null && markerOptions['position'])) {
-                markerOptions['position'] = mapLatLng;
+            if (typeof geobcn !== "undefined") {
+                geobcn.apiManager('Wm6AyzelmDfIIm6K3LbnoiuzIMxwiB', 'v2', init_bcn_map);
             }
 
-            marker = new google.maps.Marker(markerOptions);
-            google.maps.event.addListener(marker, 'dragend', function() {
-                $latitudeField.val(this.position.lat());
-                $longitudeField.val(this.position.lng());
-                doGeocode();
-            });
-            if ($latitudeField.val() && $longitudeField.val()) {
-                google.maps.event.trigger(marker, 'dragend');
-            }
-
-            $latitudeField.add($longitudeField).bind('keyup', function(e) {
+            $latitudeField.add($longitudeField).bind('change', function(e) {
                 var latitude = parseFloat($latitudeField.val()) || 0;
                 var longitude = parseFloat($longitudeField.val()) || 0;
-                var center = new google.maps.LatLng(latitude, longitude);
-                map.setCenter(center);
-                map.setZoom(15);
-                marker.setPosition(center);
-                doGeocode();
+                init_bcn_map();
             });
         });
     });
