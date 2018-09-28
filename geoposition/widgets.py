@@ -6,7 +6,7 @@ from django.template.loader import render_to_string
 from django.utils import six
 from django.utils.translation import ugettext_lazy as _
 
-import constants
+from geoposition import constants
 from .conf import settings
 
 

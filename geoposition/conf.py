@@ -2,18 +2,20 @@
 from django.conf import settings as django_settings
 from django.core.exceptions import ImproperlyConfigured
 
+from geoposition import constants
+
 
 class AppSettings(object):
     defaults = {
         'MAP_WIDGET_HEIGHT': 480,
         'MAP_OPTIONS': {},
         'MARKER_OPTIONS': {},
-        'ENGINE_APY_KEY': 'PLANOL_BCN_MAPS_API_KEY',
+        'ENGINE_APY_KEY': constants.PLANOL_BCN,
         'GOOGLE_MAPS_API_KEY': None,
         'PLANOL_BCN_MAPS_API_KEY': None,
     }
     prefix = 'GEOPOSITION'
-    required_settings = ['ENGINE_APY_KEY', defaults.get('ENGINE_APY_KEY', 'PLANOL_BCN_MAPS_API_KEY')]
+    required_settings = ['ENGINE_APY_KEY', defaults.get('ENGINE_APY_KEY', constants.PLANOL_BCN)]
 
     def __init__(self, django_settings):
         self.django_settings = django_settings
