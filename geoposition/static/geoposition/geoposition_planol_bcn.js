@@ -24,9 +24,9 @@ if (jQuery != undefined) {
         };
 
 
-        $('.geoposition-widget').each(function() {
+        $('.geoposition-widget').each(function(index) {
             var $container = $(this),
-                idMap = 'contact-map',
+                idMap = 'contact-map' + index,
                 $mapContainer = $('<div class="geoposition-map" id="' + idMap + '" >'),
                 $addressRow = $('<div class="geoposition-address" />'),
                 $searchRow = $('<div class="geoposition-search" />'),
@@ -61,7 +61,6 @@ if (jQuery != undefined) {
                 var feature = {
                   'id': idMap,
                   'latLng': mapLatLng,
-                  // 'html': html.replace(/["']/g, "\'").toString("utf8"),
                   'proj': 'EPSG:4326'
                 };
                 bcnPlanol.maps.addPoint(feature);
@@ -69,14 +68,14 @@ if (jQuery != undefined) {
 
             mapOptions = $.extend({}, mapDefaults, {"center": mapLatLng, "callback": setGuideDetailPlanolBCNPoints});
 
-            function init_bcn_map() {
-                if ($('#contact-map').length > 0 && typeof bcnPlanol.maps !== 'undefined') {
+            function initMap() {
+                if ($container.length > 0 && typeof bcnPlanol.maps !== 'undefined') {
                     map = new bcnPlanol.maps.Map(idMap, mapOptions);
                 }
             }
 
             if (typeof geobcn !== "undefined") {
-                geobcn.apiManager($container.attr('data-api-key').replace('"', ''), 'v2', init_bcn_map);
+                geobcn.apiManager($container.attr('data-api-key'), 'v2', initMap);
             }
         });
     });
