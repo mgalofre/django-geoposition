@@ -44,7 +44,7 @@ class GeopositionWidget(forms.MultiWidget):
         })
 
     class Media:
-        if settings.SET_MAPS_API_KEY == constants.GOOGLE_MAPS:
+        if settings.ENGINE_APY_KEY == constants.GOOGLE_MAPS:
             js = (
                 '//maps.google.com/maps/api/js?key=%s' % settings.GOOGLE_MAPS_API_KEY,
                 'geoposition/geoposition.js',

@@ -2,6 +2,8 @@
 django-geoposition
 ==================
 
+This app is forked from `Django-Geoposition`_, using `Plànol BCN`_  as a Map engine.
+
 A model field that can hold a geoposition (latitude/longitude), and corresponding admin/form widget.
 
 .. image:: https://badge.fury.io/py/django-geoposition.svg
@@ -37,11 +39,16 @@ Installation
         "geoposition",
     )
 
-- Set your Google API key in you settings file::
+- Set your Map engine in you settings file::
 
+    GEOPOSITION_PLANOL_BCN_MAPS_API_KEY = 'YOUR_API_KEY'
+
+- Set your Plànol BCN or Google API key in you settings file::
+
+    GEOPOSITION_PLANOL_BCN_MAPS_API_KEY = 'YOUR_API_KEY'
     GEOPOSITION_GOOGLE_MAPS_API_KEY = 'YOUR_API_KEY'
 
-  API keys may be obtained here: https://developers.google.com/maps/documentation/javascript/get-api-key
+  Google API keys may be obtained here: https://developers.google.com/maps/documentation/javascript/get-api-key
 
 - If you are still using Django <1.3, you are advised to install
   `django-staticfiles`_ for static file serving.
@@ -147,6 +154,8 @@ License
 .. _PyPI: http://pypi.python.org/pypi/django-geoposition
 .. _django-staticfiles: http://github.com/jezdez/django-staticfiles
 .. _Google Maps: http://code.google.com/apis/maps/documentation/javascript/
+.. _Django-Geoposition: https://github.com/philippbosch/django-geoposition
+.. _Plànol BCN: https://w33.bcn.cat/planolBCN/ca/
 .. |geoposition-widget-admin| image:: docs/images/geoposition-widget-admin.jpg
 .. _jQuery: http://jquery.com
 .. _MIT: http://philippbosch.mit-license.org/

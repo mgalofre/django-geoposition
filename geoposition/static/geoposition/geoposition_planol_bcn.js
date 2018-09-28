@@ -32,11 +32,24 @@ if (jQuery != undefined) {
                 $searchRow = $('<div class="geoposition-search" />'),
                 $latitudeField = $container.find('input.geoposition:eq(0)'),
                 $longitudeField = $container.find('input.geoposition:eq(1)'),
-                latitude = parseFloat($latitudeField.val()) || 41.387521,
-                longitude = parseFloat($longitudeField.val()) || 2.169717,
                 map,
                 mapLatLng,
-                mapOptions;
+                mapOptions,
+                default_lat = 41.387521,
+                default_lng = 2.169717;
+
+            markerCustomOptions = JSON.parse($container.attr('data-marker-options'));
+            if (markerCustomOptions !== null && markerCustomOptions.position !== undefined) {
+                if (markerCustomOptions.position !== null && markerCustomOptions.position.lat !== undefined && markerCustomOptions.position.lat !== null) {
+                    default_lat = parseFloat(markerCustomOptions.position.lat)
+                }
+                if (markerCustomOptions.position !== null && markerCustomOptions.position.lng !== undefined && markerCustomOptions.position.lng !== null) {
+                    default_lng = parseFloat(markerCustomOptions.position.lng)
+                }
+            }
+
+            var latitude = parseFloat($latitudeField.val()) || default_lat,
+                longitude = parseFloat($longitudeField.val()) || default_lng;
 
             $mapContainer.css('height', $container.attr('data-map-widget-height') + 'px');
 
