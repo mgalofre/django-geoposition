@@ -8,10 +8,12 @@ class AppSettings(object):
         'MAP_WIDGET_HEIGHT': 480,
         'MAP_OPTIONS': {},
         'MARKER_OPTIONS': {},
+        'SET_MAPS_API_KEY': 'PLANOL_BCN_MAPS_API_KEY',
         'GOOGLE_MAPS_API_KEY': None,
+        'PLANOL_BCN_MAPS_API_KEY': None,
     }
     prefix = 'GEOPOSITION'
-    required_settings = ['GOOGLE_MAPS_API_KEY']
+    required_settings = ['SET_MAPS_API_KEY', defaults.get('SET_MAPS_API_KEY', 'PLANOL_BCN_MAPS_API_KEY')]
 
     def __init__(self, django_settings):
         self.django_settings = django_settings

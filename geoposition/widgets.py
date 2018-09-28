@@ -5,6 +5,8 @@ from django import forms
 from django.template.loader import render_to_string
 from django.utils import six
 from django.utils.translation import ugettext_lazy as _
+
+import constants
 from .conf import settings
 
 
@@ -37,16 +39,22 @@ class GeopositionWidget(forms.MultiWidget):
                 'map_widget_height': settings.MAP_WIDGET_HEIGHT or 500,
                 'map_options': json.dumps(settings.MAP_OPTIONS),
                 'marker_options': json.dumps(settings.MARKER_OPTIONS),
+                'api_key': settings.PLANOL_BCN_MAPS_API_KEY or None,
             }
         })
 
     class Media:
-        js = (
-            # '//maps.google.com/maps/api/js?key=%s' % settings.GOOGLE_MAPS_API_KEY,
-            'geoposition/geoposition.js',
-            'https://www.barcelona.cat/api-management/javascripts/geobcn.min.js',
-            'https://www.barcelona.cat/api-service/bcn-planol/js/bcn_service_planol.min.js'
-        )
+        if settings.SET_MAPS_API_KEY == constants.GOOGLE_MAPS:
+            js = (
+                '//maps.google.com/maps/api/js?key=%s' % settings.GOOGLE_MAPS_API_KEY,
+                'geoposition/geoposition.js',
+            )
+        else:
+            js = (
+                'geoposition/geoposition_planol_bcn.js',
+                'https://www.barcelona.cat/api-management/javascripts/geobcn.min.js',
+                'https://www.barcelona.cat/api-service/bcn-planol/js/bcn_service_planol.min.js'
+            )
         css = {
             'all': ('geoposition/geoposition.css',)
         }
