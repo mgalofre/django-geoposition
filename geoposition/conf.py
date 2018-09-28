@@ -15,7 +15,7 @@ class AppSettings(object):
         'PLANOL_BCN_MAPS_API_KEY': None,
     }
     prefix = 'GEOPOSITION'
-    required_settings = ['ENGINE_APY_KEY', defaults.get('ENGINE_APY_KEY', constants.PLANOL_BCN)]
+    required_settings = ['ENGINE_APY_KEY']
 
     def __init__(self, django_settings):
         self.django_settings = django_settings
